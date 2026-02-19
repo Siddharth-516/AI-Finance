@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info: { title: AI Financial Companion API, version: 0.1.0 }
+paths:
+  /api/v1/auth/register:
+    post:
+      requestBody: { required: true }
+      responses: { '200': { description: OK }, '400': { description: Bad Request }, '422': { description: Validation } }
+  /api/v1/auth/login:
+    post: { responses: { '200': { description: OK }, '401': { description: Unauthorized } } }
+  /api/v1/user/me:
+    get: { responses: { '200': { description: OK }, '401': { description: Unauthorized } } }
+  /api/v1/transactions/import/sms:
+    post: { responses: { '200': { description: OK }, '400': { description: Missing consent } } }
+  /api/v1/transactions:
+    post: { responses: { '200': { description: OK } } }
+    get: { responses: { '200': { description: OK } } }
+  /api/v1/insights:
+    get: { responses: { '200': { description: OK } } }
+  /api/v1/chat:
+    post: { responses: { '200': { description: OK } } }
+  /api/v1/recommendations/savings:
+    get: { responses: { '200': { description: OK } } }
+  /api/v1/models/retrain:
+    post: { responses: { '200': { description: OK }, '403': { description: Forbidden } } }

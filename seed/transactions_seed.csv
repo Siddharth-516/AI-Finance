@@ -1,0 +1,11 @@
+raw_text,txn_date,amount,currency,merchant,category
+"Your A/c 12XX debited by INR 1,250.00 at Zomato on 12-02-2026",2026-02-12,1250,INR,Zomato,food_dining
+"Salary credited to A/c 12XX: INR 35,000.00",2026-02-01,35000,INR,Employer,salary
+"UPI transfer of Rs. 600 to Paytm on 10/02",2026-02-10,600,INR,Paytm,others
+"Paid INR 320 at Uber on 11-02-2026",2026-02-11,320,INR,Uber,transport
+"Netflix subscription INR 499",2026-02-05,499,INR,Netflix,subscriptions
+"Swiggy order debited INR 760",2026-02-07,760,INR,Swiggy,food_dining
+"Apollo pharmacy purchase Rs. 1400",2026-02-03,1400,INR,Apollo,healthcare
+"Electricity bill paid INR 2100",2026-02-09,2100,INR,TataPower,utilities
+"Bookstore payment INR 850",2026-02-08,850,INR,Crossword,education
+"Movie tickets INR 900 at PVR",2026-02-13,900,INR,PVR,entertainment
