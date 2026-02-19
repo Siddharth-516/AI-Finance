@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purpose: design tokens and theme variables for light/dark fintech dashboard. */
+/* Tailwind config extension notes:
+   theme.extend.colors = {
+     bg: 'hsl(var(--bg) / <alpha-value>)',
+     card: 'hsl(var(--card) / <alpha-value>)',
+     foreground: 'hsl(var(--foreground) / <alpha-value>)',
+     muted: 'hsl(var(--muted) / <alpha-value>)',
+     border: 'hsl(var(--border) / <alpha-value>)',
+     accent: 'hsl(var(--accent) / <alpha-value>)',
+     success: 'hsl(var(--success) / <alpha-value>)',
+     danger: 'hsl(var(--danger) / <alpha-value>)',
+   }
+*/
+
+:root {
+  --bg: 210 33% 98%;
+  --card: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --muted: 215 16% 47%;
+  --border: 214 32% 91%;
+  --accent: 221 83% 53%;
+  --success: 145 63% 42%;
+  --danger: 0 72% 51%;
+}
+
+.dark {
+  --bg: 222 47% 11%;
+  --card: 221 39% 14%;
+  --foreground: 210 40% 98%;
+  --muted: 214 20% 70%;
+  --border: 217 33% 25%;
+  --accent: 217 91% 60%;
+  --success: 145 63% 52%;
+  --danger: 0 84% 60%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply min-h-screen bg-bg text-foreground antialiased;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  h1 {
+    @apply text-2xl font-semibold;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  h3 {
+    @apply text-base font-semibold;
+  }
+
+  p {
+    @apply text-sm leading-6;
+  }
+}
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow: 0 4px 22px -10px rgba(15, 23, 42, 0.18);
+  }
+}
