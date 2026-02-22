@@ -1,12 +1,17 @@
-/** Purpose: premium dashboard page composed with charts, cards, and transactions. */
+/** Purpose: immersive financial dashboard blending analytics, coaching, and showcase UX. */
 import React, { useMemo, useState } from 'react'
 import Header from '../components/Layout/Header'
 import Sidebar from '../components/Layout/Sidebar'
 import BottomNav from '../components/Layout/BottomNav'
 import InsightCard from '../components/Cards/InsightCard'
+import MetricCard from '../components/Cards/MetricCard'
+import GoalCard from '../components/Cards/GoalCard'
 import MonthlyTrendChart from '../components/Charts/MonthlyTrendChart'
 import SpendingBarChart from '../components/Charts/SpendingBarChart'
 import TxTable from '../components/Transactions/TxTable'
+import TimelineCard from '../components/Widgets/TimelineCard'
+import NudgePanel from '../components/Widgets/NudgePanel'
+import AnimatedBackdrop from '../components/FX/AnimatedBackdrop'
 import useFetch from '../hooks/useFetch'
 import { getDashboardSummary } from '../services/api'
 
@@ -37,6 +42,7 @@ const mockTransactions = [
   { id: '1', date: '2025-04-03', title: 'Grocery', amount: 120, category: 'Food', merchant: 'BigBasket' },
   { id: '2', date: '2025-04-05', title: 'Cab', amount: 240, category: 'Transport', merchant: 'Uber' },
   { id: '3', date: '2025-04-07', title: 'Rent', amount: 400, category: 'Rent', merchant: 'Landlord' },
+  { id: '4', date: '2025-04-08', title: 'SIP', amount: 5000, category: 'Investments', merchant: 'Index SIP' },
 ]
 
 export default function Dashboard() {
@@ -71,22 +77,36 @@ export default function Dashboard() {
   const monthly = mockMonthly
   const categories = mockCategories
 
-  const overviewCards = [
-    { label: 'Total Spent', value: `₹${summary.total_spent.toLocaleString()}` },
-    { label: 'Income', value: `₹${summary.total_income.toLocaleString()}` },
-    { label: 'Net Savings', value: `₹${summary.net_savings.toLocaleString()}` },
-    { label: 'Saving Rate', value: `${summary.saving_rate}%` },
-  ]
-
   return (
     <div className='min-h-screen bg-bg text-foreground'>
       <div className='flex'>
         <Sidebar isOpen={isSidebarOpen} setIsOpen={setSidebarOpen} />
 
-        <div className='flex min-h-screen flex-1 flex-col md:ml-0'>
+        <div className='relative flex min-h-screen flex-1 flex-col overflow-hidden'>
+          <AnimatedBackdrop />
           <Header onMenuClick={() => setSidebarOpen(true)} onSearch={setQuery} />
 
-          <main className='space-y-6 p-4 pb-24 md:p-6' data-testid='dashboard-page'>
+          <main className='relative z-10 space-y-6 p-4 pb-24 md:p-6' data-testid='dashboard-page'>
+            <section className='glass-card relative overflow-hidden rounded-3xl border border-border p-6'>
+              <div className='absolute -right-16 -top-16 h-44 w-44 rounded-full bg-accent/20 blur-3xl' />
+              <p className='text-xs uppercase tracking-[0.2em] text-accent'>Prototype Excellence Mode</p>
+              <h1 className='mt-2 text-3xl font-semibold leading-tight md:text-4xl'>
+                Build wealth habits with AI precision and stunning clarity.
+              </h1>
+              <p className='mt-3 max-w-3xl text-sm text-muted'>
+                A premium command center for students and young professionals: smarter insights, elegant visual storytelling,
+                and nudges that convert intent into action.
+              </p>
+              <div className='mt-5 flex flex-wrap gap-3'>
+                <button type='button' className='btn-glow rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white'>
+                  Start smart import
+                </button>
+                <button type='button' className='rounded-xl border border-border px-4 py-2 text-sm font-semibold'>
+                  Watch demo flow
+                </button>
+              </div>
+            </section>
+
             {error ? (
               <div className='rounded-xl border border-danger/40 bg-danger/10 p-4 text-sm text-danger'>
                 Unable to load dashboard right now.
@@ -95,35 +115,33 @@ export default function Dashboard() {
             ) : null}
 
             <section className='grid gap-4 sm:grid-cols-2 xl:grid-cols-4'>
-              {overviewCards.map((card) => (
-                <article
-                  key={card.label}
-                  className='rounded-2xl border border-border bg-card p-4 shadow-soft transition hover:-translate-y-0.5'
-                >
-                  <p className='text-sm text-muted'>Estimated for this month</p>
-                  <p className='mt-2 text-xl font-semibold'>{card.value}</p>
-                  <p className='mt-1 text-xs text-muted'>{card.label}</p>
-                  <div className='mt-3 h-1.5 rounded bg-muted/25'>
-                    <div className='h-1.5 w-2/3 rounded bg-accent' />
-                  </div>
-                </article>
-              ))}
+              <MetricCard title='Total Spent' value={`₹${summary.total_spent.toLocaleString()}`} subtitle='Estimated for this month' trend='+12%' tone='danger' />
+              <MetricCard title='Income' value={`₹${summary.total_income.toLocaleString()}`} subtitle='Estimated for this month' trend='+4%' tone='success' />
+              <MetricCard title='Net Savings' value={`₹${summary.net_savings.toLocaleString()}`} subtitle='Estimated for this month' trend='+9%' tone='success' />
+              <MetricCard title='Saving Rate' value={`${summary.saving_rate}%`} subtitle='Estimated for this month' trend='+3%' tone='accent' />
+            </section>
+
+            <section className='grid gap-4 xl:grid-cols-3'>
+              <div className='space-y-4 xl:col-span-2'>
+                <MonthlyTrendChart data={monthly} loading={loading} />
+                <SpendingBarChart data={categories} loading={loading} />
+              </div>
+              <div className='space-y-4'>
+                {insights.map((item, idx) => (
+                  <InsightCard key={item} title={`AI Insight ${idx + 1}`} body={item} />
+                ))}
+                <GoalCard title='Emergency Fund Goal' current={42000} target={100000} />
+              </div>
             </section>
 
             <section className='grid gap-4 xl:grid-cols-3'>
               <div className='xl:col-span-2'>
-                <MonthlyTrendChart data={monthly} loading={loading} />
+                <TxTable rows={filteredTx} loading={loading} />
               </div>
-              <div className='space-y-3'>
-                {insights.map((item, idx) => (
-                  <InsightCard key={item} title={`Insight ${idx + 1}`} body={item} />
-                ))}
+              <div className='space-y-4'>
+                <NudgePanel />
+                <TimelineCard />
               </div>
-            </section>
-
-            <section className='grid gap-4 xl:grid-cols-2'>
-              <SpendingBarChart data={categories} loading={loading} />
-              <TxTable rows={filteredTx} loading={loading} />
             </section>
           </main>
         </div>
@@ -131,7 +149,7 @@ export default function Dashboard() {
 
       <button
         type='button'
-        className='fixed bottom-20 right-4 z-40 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white shadow-lg transition active:scale-95 md:bottom-6 md:right-6'
+        className='btn-glow fixed bottom-20 right-4 z-40 rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white shadow-lg transition active:scale-95 md:bottom-6 md:right-6'
         onClick={() => setModalOpen(true)}
         data-testid='fab-add'
       >
@@ -140,9 +158,13 @@ export default function Dashboard() {
 
       {isModalOpen ? (
         <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4'>
-          <div className='w-full max-w-md rounded-2xl bg-card p-5 shadow-lg'>
+          <div className='glass-card w-full max-w-md rounded-2xl border border-border p-5 shadow-lg'>
             <h3 className='text-lg font-semibold'>Quick add transaction</h3>
             <p className='mt-1 text-sm text-muted'>Capture spending in a few taps.</p>
+            <div className='mt-4 grid gap-3'>
+              <input type='text' placeholder='Merchant' className='rounded-lg border border-border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40' />
+              <input type='number' placeholder='Amount (INR)' className='rounded-lg border border-border bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent/40' />
+            </div>
             <div className='mt-4 flex justify-end gap-2'>
               <button type='button' className='rounded-lg border border-border px-3 py-2 text-sm' onClick={() => setModalOpen(false)}>Close</button>
               <button type='button' className='rounded-lg bg-accent px-3 py-2 text-sm font-medium text-white' onClick={() => setModalOpen(false)}>Save</button>

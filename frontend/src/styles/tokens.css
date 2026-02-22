@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Purpose: design tokens and theme variables for light/dark fintech dashboard. */
+/* Purpose: design tokens and animation system for premium fintech UI (light + dark). */
 /* Tailwind config extension notes:
    theme.extend.colors = {
      bg: 'hsl(var(--bg) / <alpha-value>)',
@@ -17,6 +17,17 @@
 */
 
 :root {
+  --bg: 224 47% 7%;
+  --card: 222 39% 11%;
+  --foreground: 210 40% 98%;
+  --muted: 215 20% 72%;
+  --border: 217 33% 23%;
+  --accent: 200 100% 55%;
+  --success: 145 63% 52%;
+  --danger: 0 84% 62%;
+}
+
+.light {
   --bg: 210 33% 98%;
   --card: 0 0% 100%;
   --foreground: 222 47% 11%;
@@ -25,17 +36,6 @@
   --accent: 221 83% 53%;
   --success: 145 63% 42%;
   --danger: 0 72% 51%;
-}
-
-.dark {
-  --bg: 222 47% 11%;
-  --card: 221 39% 14%;
-  --foreground: 210 40% 98%;
-  --muted: 214 20% 70%;
-  --border: 217 33% 25%;
-  --accent: 217 91% 60%;
-  --success: 145 63% 52%;
-  --danger: 0 84% 60%;
 }
 
 @layer base {
@@ -67,12 +67,72 @@
   }
 }
 
-@layer utilities {
-  .shadow-soft {
-    box-shadow: 0 4px 22px -10px rgba(15, 23, 42, 0.18);
+@layer components {
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-xl;
+  }
+
+  .btn-glow {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0.3);
+    animation: glowPulse 2.6s ease-in-out infinite;
   }
 }
-:root { --space-1: 8px; --space-2: 16px; --color-bg: #f9fafb; --color-primary: #1d4ed8; }
-body { background: var(--color-bg); font-family: Inter, Arial, sans-serif; margin: var(--space-2); }
-button { margin-right: var(--space-1); }
-.fab { position: fixed; right: 20px; bottom: 20px; border-radius: 999px; width: 48px; height: 48px; }
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow: 0 4px 22px -10px rgba(8, 47, 73, 0.35);
+  }
+
+  .shadow-neon {
+    box-shadow: 0 14px 32px -12px rgba(56, 189, 248, 0.35);
+  }
+
+  .bg-grid-mask {
+    background-image: linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at center, black, transparent 75%);
+  }
+
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 10s ease-in-out infinite 1.2s;
+  }
+
+  .animate-pulse-soft {
+    animation: pulseSoft 2.2s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(34, 211, 238, 0.35);
+  }
+}
