@@ -1,13 +1,14 @@
 # UI Dashboard Notes
 
 ## Pages
-- `/login`: Google-style sign-in experience (email+name dev fallback).
-- `/dashboard`: Add expense, AI insights, AI chatbot, and expense table.
+- `/login`: Google OAuth login (Google Identity Services) + dev fallback.
+- `/dashboard`: Add expense, AI insights, AI chatbot, and account-restored expense table.
 - `/transactions`: Full expense history with delete controls.
 
 ## Auth behavior
 - Access token stored in localStorage (`aifc_token`) after login.
-- Logout removes token and prevents local data access.
+- Token is attached as Bearer auth to protected API calls.
+- Logout removes token and local session access immediately.
 - Re-login restores account data from backend APIs.
 
 ## Run locally

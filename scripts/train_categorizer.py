@@ -11,6 +11,10 @@ from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 
+ROOT = Path(__file__).resolve().parents[1]
+SEED_PATH = ROOT / 'seed' / 'transactions_seed.csv'
+MODEL_DIR = ROOT / 'backend' / 'app' / 'ml'
+
 
 def preprocess(text: str) -> str:
     text = text.lower()
@@ -20,7 +24,7 @@ def preprocess(text: str) -> str:
 
 
 def main() -> None:
-    df = pd.read_csv('seed/transactions_seed.csv')
+    df = pd.read_csv(SEED_PATH)
     df['clean'] = df['raw_text'].astype(str).apply(preprocess)
     X_train, X_test, y_train, y_test = train_test_split(df['clean'], df['category'], test_size=0.3, random_state=42, stratify=df['category'])
     pipe = Pipeline([('tfidf', TfidfVectorizer(ngram_range=(1, 2))), ('clf', LogisticRegression(max_iter=400))])
@@ -30,9 +34,9 @@ def main() -> None:
     print(classification_report(y_test, pred, zero_division=0))
     print(confusion_matrix(y_test, pred))
     print('weighted_f1=', f1_score(y_test, pred, average='weighted'))
-    Path('backend/app/ml').mkdir(parents=True, exist_ok=True)
-    joblib.dump(pipe, 'backend/app/ml/model.joblib')
-    Path('backend/app/ml/metrics.json').write_text(pd.Series(report).to_json())
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    joblib.dump(pipe, MODEL_DIR / 'model.joblib')
+    (MODEL_DIR / 'metrics.json').write_text(pd.Series(report).to_json())
 
 
 if __name__ == '__main__':

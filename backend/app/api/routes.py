@@ -141,15 +141,24 @@ async def risk_quiz(payload: RiskQuizRequest, user=Depends(get_current_user), db
 
 
 @router.post('/transactions/import/sms')
-async def import_sms(payload: SMSImportRequest, user=Depends(get_current_user)):
+async def import_sms(payload: SMSImportRequest, user=Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     if not payload.consent:
         raise HTTPException(status_code=400, detail='Explicit consent is required before parsing SMS')
     parsed = parse_bulk_sms(payload.items)
+    saved = 0
     for item in parsed:
         category, confidence = categorize_text(item.get('raw_text', ''))
         item['category'] = category
         item['confidence'] = confidence
-    return {'preview': parsed, 'count': len(parsed)}
+        if item.get('amount') is not None:
+            txn_date = date.today()
+            txn = Transaction(user_id=user.id, txn_date=txn_date, amount=item['amount'], currency='INR', merchant=item.get('merchant'), raw_text=item.get('raw_text'), category=category, category_confidence=confidence, tags=[])
+            expense = Expense(user_id=user.id, amount=item['amount'], category=category, expense_date=txn_date, description=item.get('merchant') or 'SMS import')
+            db.add(txn)
+            db.add(expense)
+            saved += 1
+    await db.commit()
+    return {'preview': parsed, 'count': len(parsed), 'saved': saved}
 
 
 @router.post('/transactions')
@@ -217,3 +226,16 @@ async def retrain(user=Depends(get_current_user), db: AsyncSession = Depends(get
 @router.get('/healthz')
 async def healthz():
     return {'ok': True}
+
+
+@router.delete('/privacy/delete')
+async def privacy_delete(user=Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    expense_rows = await db.scalars(select(Expense).where(Expense.user_id == user.id))
+    for row in expense_rows:
+        await db.delete(row)
+    txn_rows = await db.scalars(select(Transaction).where(Transaction.user_id == user.id))
+    for row in txn_rows:
+        await db.delete(row)
+    await db.delete(user)
+    await db.commit()
+    return {'status': 'deleted'}

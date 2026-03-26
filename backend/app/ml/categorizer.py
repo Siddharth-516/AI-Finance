@@ -11,7 +11,7 @@ RULES = {
     "netflix": "subscriptions",
 }
 
-MODEL_PATH = Path("backend/app/ml/model.joblib")
+MODEL_PATH = Path(__file__).resolve().parent / 'model.joblib'
 
 
 def categorize_text(raw_text: str) -> tuple[str, float]:
