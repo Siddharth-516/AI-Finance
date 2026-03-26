@@ -1,4 +1,4 @@
-/** Purpose: API service helpers for dashboard and transaction flows. */
+/** Purpose: API service helpers for auth, expenses, insights, and chat flows. */
 import axios from 'axios'
 
 const api = axios.create({
@@ -6,57 +6,65 @@ const api = axios.create({
   timeout: 10000,
 })
 
-const toIso = (date) => date.toISOString().slice(0, 10)
-
-export async function getDashboardSummary() {
-  const to = new Date()
-  const from = new Date()
-  from.setMonth(from.getMonth() - 3)
-
-  const [insightsRes, transactionsRes] = await Promise.all([
-    api.get('/api/v1/insights'),
-    api.get('/api/v1/transactions', {
-      params: {
-        from_date: toIso(from),
-        to: toIso(to),
-      },
-    }),
-  ])
-
-  return {
-    insights: insightsRes.data?.items || [],
-    transactions: transactionsRes.data || [],
+export function setAuthToken(token) {
+  if (token) {
+    localStorage.setItem('aifc_token', token)
+    api.defaults.headers.common.Authorization = `Bearer ${token}`
+  } else {
+    localStorage.removeItem('aifc_token')
+    delete api.defaults.headers.common.Authorization
   }
 }
 
-export async function getTransactions(params = {}) {
-  const to = new Date()
-  const from = new Date()
-  from.setMonth(from.getMonth() - 1)
+export function loadAuthToken() {
+  const token = localStorage.getItem('aifc_token')
+  if (token) setAuthToken(token)
+  return token
+}
 
-  const response = await api.get('/api/v1/transactions', {
-    params: {
-      from_date: toIso(from),
-      to: toIso(to),
-      page: params.page || 1,
-      page_size: params.pageSize || 10,
-      ...params,
-    },
-  })
+export async function googleLogin(payload) {
+  const response = await api.post('/api/v1/auth/google', payload)
+  return response.data
+}
 
+export async function getProfile() {
+  const response = await api.get('/api/v1/user/me')
+  return response.data
+}
+
+export async function addExpense(payload) {
+  const response = await api.post('/api/v1/expenses', payload)
+  return response.data
+}
+
+export async function getExpenses() {
+  const response = await api.get('/api/v1/expenses')
   return response.data || []
 }
 
-export async function importSms(file) {
-  const text = await file.text()
-  const lines = text.split('\n').map((line) => line.trim()).filter(Boolean)
-
-  const response = await api.post('/api/v1/transactions/import/sms', {
-    items: lines,
-    consent: true,
-  })
-
+export async function updateExpense(id, payload) {
+  const response = await api.put(`/api/v1/expenses/${id}`, payload)
   return response.data
+}
+
+export async function deleteExpense(id) {
+  const response = await api.delete(`/api/v1/expenses/${id}`)
+  return response.data
+}
+
+export async function getInsights() {
+  const response = await api.get('/api/v1/insights')
+  return response.data?.items || []
+}
+
+export async function chatWithCoach(message) {
+  const response = await api.post('/api/v1/chat', { message })
+  return response.data
+}
+
+export async function getDashboardSummary() {
+  const [insights, expenses] = await Promise.all([getInsights(), getExpenses()])
+  return { insights, expenses }
 }
 
 export default api

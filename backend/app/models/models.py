@@ -3,7 +3,7 @@
 import uuid
 from sqlalchemy import Date, DateTime, ForeignKey, Index, Numeric, String, Text, func, JSON
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 
 
@@ -12,7 +12,7 @@ class User(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(Text)
     email: Mapped[str] = mapped_column(Text, unique=True, index=True)
-    password_hash: Mapped[str] = mapped_column(Text)
+    password_hash: Mapped[str] = mapped_column(Text, default="oauth")
     timezone: Mapped[str] = mapped_column(Text, default="Asia/Kolkata")
     currency: Mapped[str] = mapped_column(Text, default="INR")
     income_range: Mapped[str] = mapped_column(Text, default="0-25000")
@@ -20,13 +20,17 @@ class User(Base):
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
-class Account(Base):
-    __tablename__ = "accounts"
+class Expense(Base):
+    __tablename__ = "expenses"
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
-    provider: Mapped[str] = mapped_column(Text, default="manual")
-    name: Mapped[str] = mapped_column(Text)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    amount: Mapped[float] = mapped_column(Numeric, nullable=False)
+    category: Mapped[str] = mapped_column(String(64), default="others")
+    expense_date: Mapped[str] = mapped_column(Date, index=True)
+    description: Mapped[str] = mapped_column(Text, default="")
     created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (Index("ix_expenses_user_date", "user_id", "expense_date"),)
 
 
 class Transaction(Base):
@@ -48,6 +52,15 @@ class Transaction(Base):
         Index("ix_transactions_user_date", "user_id", "txn_date"),
         Index("ix_transactions_raw_text", "raw_text", postgresql_using="gin", postgresql_ops={"raw_text": "gin_trgm_ops"}),
     )
+
+
+class Account(Base):
+    __tablename__ = "accounts"
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    provider: Mapped[str] = mapped_column(Text, default="manual")
+    name: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[str] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Category(Base):

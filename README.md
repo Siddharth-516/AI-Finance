@@ -2,32 +2,37 @@
 
 EDUCATIONAL_ONLY: This application provides educational information and is not financial advice. Consult a certified financial advisor before making investment decisions.
 
+## Features
+- Google OAuth-style login endpoint (`/api/v1/auth/google`) with user-scoped data.
+- Expense CRUD APIs (`/api/v1/expenses`) with per-user isolation.
+- AI insights (`/api/v1/insights`) and AI chat coach (`/api/v1/chat`).
+- React app with Login + Dashboard + Transactions + AI coach.
+
 ## Quick start
 ```bash
 docker-compose up --build
 ```
 
-## Local development
-- Backend: `cd backend && pip install -r requirements.txt && uvicorn app.main:app --reload`
-- Frontend: `cd frontend && npm install && npm run dev`
+## Local backend
+```bash
+pip install -r backend/requirements.txt
+PYTHONPATH=backend uvicorn app.main:app --reload
+```
 
-## ENV vars
-`DATABASE_URL, JWT_SECRET, OPENAI_API_KEY, ENCRYPTION_KEY, CORS_ORIGINS`
+## Local frontend
+```bash
+npm --prefix frontend install
+npm --prefix frontend run dev
+```
 
-## Migrations
-`alembic -c backend/alembic.ini upgrade head`
+## Environment variables
+- `DATABASE_URL` (default sqlite dev DB)
+- `JWT_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `OPENAI_API_KEY`
 
 ## Tests
-- Backend: `PYTHONPATH=backend pytest backend/tests -q`
-- Frontend: `cd frontend && npm test`
-
-## Retrain model
-`./scripts/retrain_pipeline.sh`
-
-## Deploy
-- Docker image via GitHub Actions.
-- K8s manifests in `infra/k8s`.
-- Terraform stubs in `infra/terraform`.
-
-## Demo credentials
-- `demo@example.com / Demo@12345`
+```bash
+PYTHONPATH=backend pytest backend/tests -q
+npm --prefix frontend test
+```

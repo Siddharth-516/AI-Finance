@@ -10,10 +10,11 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     access_token_minutes: int = 30
     refresh_token_minutes: int = 60 * 24 * 7
-    database_url: str = "postgresql+asyncpg://postgres:postgres@postgres:5432/aifinance"
+    database_url: str = "sqlite+aiosqlite:///./aifinance.db"
     redis_url: str = "redis://redis:6379/0"
     cors_origins: str = "http://localhost:5173"
     openai_api_key: str = ""
+    google_client_id: str = ""
     encryption_key: str = "0123456789abcdef0123456789abcdef"
     rate_limit_per_minute: int = 120
     educational_disclaimer: str = (

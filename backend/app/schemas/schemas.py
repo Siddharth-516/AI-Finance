@@ -18,6 +18,12 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class GoogleLoginRequest(BaseModel):
+    id_token: Optional[str] = None
+    email: Optional[EmailStr] = None
+    name: Optional[str] = None
+
+
 class TokenPair(BaseModel):
     access_token: str
     refresh_token: str
@@ -30,6 +36,20 @@ class UserOut(BaseModel):
     currency: str
     income_range: str
     risk_level: str
+
+
+class ExpenseIn(BaseModel):
+    amount: float
+    category: str = "others"
+    date: date
+    description: str = ""
+
+
+class ExpenseUpdate(BaseModel):
+    amount: Optional[float] = None
+    category: Optional[str] = None
+    date: Optional[date] = None
+    description: Optional[str] = None
 
 
 class TransactionIn(BaseModel):

@@ -1,28 +1,17 @@
 # UI Dashboard Notes
 
-## New pages
-- `/`: cinematic landing page with animated storytelling and CTA into product flows.
-- `/dashboard`: premium analytics cockpit with AI insights, trends, goal tracker, nudges, and timeline.
-- `/transactions`: import, filters, quality metrics, and responsive transactions table.
-- `/settings`: preferences/privacy placeholder.
+## Pages
+- `/login`: Google-style sign-in experience (email+name dev fallback).
+- `/dashboard`: Add expense, AI insights, AI chatbot, and expense table.
+- `/transactions`: Full expense history with delete controls.
 
-## Component map
-- Layout: `Header`, `Sidebar`, `BottomNav`
-- FX: `AnimatedBackdrop`
-- Charts: `MonthlyTrendChart`, `SpendingBarChart`
-- Cards: `InsightCard`, `MetricCard`, `GoalCard`
-- Widgets: `NudgePanel`, `TimelineCard`
-- Transactions: `TxTable`
-- Data: `services/api.js`, `hooks/useFetch.js`
+## Auth behavior
+- Access token stored in localStorage (`aifc_token`) after login.
+- Logout removes token and prevents local data access.
+- Re-login restores account data from backend APIs.
 
 ## Run locally
 ```bash
 npm install
-npm install chart.js react-chartjs-2
-npm install classnames
 npm run dev
 ```
-
-## Free asset suggestions
-- Icons: Heroicons
-- Font: Inter
