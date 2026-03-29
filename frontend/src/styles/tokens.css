@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Purpose: design tokens and animation system for premium fintech UI (light + dark). */
+/* Tailwind config extension notes:
+   theme.extend.colors = {
+     bg: 'hsl(var(--bg) / <alpha-value>)',
+     card: 'hsl(var(--card) / <alpha-value>)',
+     foreground: 'hsl(var(--foreground) / <alpha-value>)',
+     muted: 'hsl(var(--muted) / <alpha-value>)',
+     border: 'hsl(var(--border) / <alpha-value>)',
+     accent: 'hsl(var(--accent) / <alpha-value>)',
+     success: 'hsl(var(--success) / <alpha-value>)',
+     danger: 'hsl(var(--danger) / <alpha-value>)',
+   }
+*/
+
+:root {
+  --bg: 224 47% 7%;
+  --card: 222 39% 11%;
+  --foreground: 210 40% 98%;
+  --muted: 215 20% 72%;
+  --border: 217 33% 23%;
+  --accent: 200 100% 55%;
+  --success: 145 63% 52%;
+  --danger: 0 84% 62%;
+}
+
+.light {
+  --bg: 210 33% 98%;
+  --card: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --muted: 215 16% 47%;
+  --border: 214 32% 91%;
+  --accent: 221 83% 53%;
+  --success: 145 63% 42%;
+  --danger: 0 72% 51%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    @apply min-h-screen bg-bg text-foreground antialiased;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    @apply text-2xl font-semibold;
+  }
+
+  h2 {
+    @apply text-xl font-semibold;
+  }
+
+  h3 {
+    @apply text-base font-semibold;
+  }
+
+  p {
+    @apply text-sm leading-6;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    transition: border-color 0.2s ease, box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.2s ease;
+    outline: none;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+    border-color: rgba(56, 189, 248, 0.8);
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-xl;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease,
+      border-color 0.35s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 34px rgba(8, 47, 73, 0.4);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  .btn-glow {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0.3);
+    animation: glowPulse 2.6s ease-in-out infinite;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .interactive {
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(56, 189, 248, 0.25);
+  }
+
+  .interactive:active {
+    transform: scale(0.97);
+  }
+}
+
+@layer utilities {
+  .shadow-soft {
+    box-shadow: 0 4px 22px -10px rgba(8, 47, 73, 0.35);
+  }
+
+  .fancy-card {
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background-image: linear-gradient(145deg, rgba(255,255,255,0.025), rgba(255,255,255,0.01));
+  }
+
+  .floating-card {
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s ease;
+    will-change: transform, box-shadow;
+  }
+
+  .floating-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 20px 32px -12px rgba(56, 189, 248, 0.35), 0 8px 18px rgba(0, 0, 0, 0.25);
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  .shadow-neon {
+    box-shadow: 0 14px 32px -12px rgba(56, 189, 248, 0.35);
+  }
+
+  .bg-grid-mask {
+    background-image: linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at center, black, transparent 75%);
+  }
+
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: float 10s ease-in-out infinite 1.2s;
+  }
+
+  .animate-pulse-soft {
+    animation: pulseSoft 2.2s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(34, 211, 238, 0.35);
+  }
+}
